@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CDPC CRM Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>CDPC CRM</h2>
+            <button class="close-sidebar" onclick="toggleSidebar()" style="display: none;">✕</button>
+        </div>
+        <ul class="nav-menu">
+            <li class="active">
+                <a href="#" onclick="navigateTo('dashboard')" class="nav-link">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="navigateTo('companies')" class="nav-link">
+                    <span class="icon">🏢</span>
+                    <span>Companies</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="navigateTo('recruitment')" class="nav-link">
+                    <span class="icon">👔</span>
+                    <span>Recruitment</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="navigateTo('reports')" class="nav-link">
+                    <span class="icon">📈</span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li id="adminMenuBtn" style="display: none;">
+                <a href="#" onclick="navigateTo('admin')" class="nav-link">
+                    <span class="icon">⚙️</span>
+                    <span>Admin Panel</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="theme-toggle">
+                <button onclick="toggleTheme()" class="theme-btn">🌙 Dark Mode</button>
+            </div>
+            <button onclick="logout()" class="btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <h1 id="pageTitle">Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search companies..." onkeyup="handleSearch()">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="user-menu">
+                    <button class="user-btn" onclick="toggleUserMenu()">
+                        <span class="user-avatar">👤</span>
+                        <span id="userDisplayName">User</span>
+                    </button>
+                    <div class="dropdown-menu" id="userDropdown" style="display: none;">
+                        <a href="#" onclick="navigateTo('profile')">Profile</a>
+                        <a href="#" onclick="logout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="content-wrapper" id="contentWrapper">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="dashboard-section">
+                <div class="welcome-section">
+                    <h2>Welcome back, <span id="welcomeName">User</span>! 👋</h2>
+                    <p id="lastLoginText">Last login: Loading...</p>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card" onclick="filterByType('total')">
+                        <div class="metric-icon">🏢</div>
+                        <div class="metric-content">
+                            <h3>Total Companies</h3>
+                            <p class="metric-value" id="totalCompanies">0</p>
+                            <span class="metric-label">Managed</span>
+                        </div>
+                        <div class="metric-trend">↑ Active</div>
+                    </div>
+
+                    <div class="metric-card" onclick="filterByType('sip')">
+                        <div class="metric-icon">💼</div>
+                        <div class="metric-content">
+                            <h3>SIP Recruiters</h3>
+                            <p class="metric-value" id="sipRecruiters">0</p>
+                            <span class="metric-label">Companies</span>
+                        </div>
+                        <div class="metric-trend">↑ Growing</div>
+                    </div>
+
+                    <div class="metric-card" onclick="filterByType('placement')">
+                        <div class="metric-icon">🎓</div>
+                        <div class="metric-content">
+                            <h3>Final Placement</h3>
+                            <p class="metric-value" id="finalPlacementRecruiters">0</p>
+                            <span class="metric-label">Companies</span>
+                        </div>
+                        <div class="metric-trend">↑ Stable</div>
+                    </div>
+
+                    <div class="metric-card" onclick="filterByType('netratva')">
+                        <div class="metric-icon">🎤</div>
+                        <div class="metric-content">
+                            <h3>Netratva Sessions</h3>
+                            <p class="metric-value" id="netratvaCount">0</p>
+                            <span class="metric-label">Conducted</span>
+                        </div>
+                        <div class="metric-trend">↑ Featured</div>
+                    </div>
+
+                    <div class="metric-card" onclick="filterByType('samarthya')">
+                        <div class="metric-icon">💡</div>
+                        <div class="metric-content">
+                            <h3>Samarthya Sessions</h3>
+                            <p class="metric-value" id="samarthyaCount">0</p>
+                            <span class="metric-label">Conducted</span>
+                        </div>
+                        <div class="metric-trend">↑ Featured</div>
+                    </div>
+
+                    <div class="metric-card" onclick="toggleOverdueFilter()">
+                        <div class="metric-icon">⏰</div>
+                        <div class="metric-content">
+                            <h3>Follow-ups Due</h3>
+                            <p class="metric-value" id="overdueFollowups">0</p>
+                            <span class="metric-label">Pending</span>
+                        </div>
+                        <div class="metric-trend">⚠️ Action</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-section">
+                    <h3>Recent Companies</h3>
+                    <div class="companies-table-wrapper">
+                        <table class="companies-table">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Industry</th>
+                                    <th>POC Name</th>
+                                    <th>Contact</th>
+                                    <th>Last Contact</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentCompaniesBody">
+                                <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Companies Section -->
+            <section id="companiesSection" class="companies-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Companies Management</h2>
+                    <button onclick="openAddCompanyForm()" class="btn-primary">+ Add Company</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <input type="text" id="companySearchInput" placeholder="Search by company name..." onkeyup="filterCompanies()">
+                    <select id="industryFilter" onchange="filterCompanies()">
+                        <option value="">All Industries</option>
+                    </select>
+                    <select id="memberFilter" onchange="filterCompanies()">
+                        <option value="">All Members</option>
+                    </select>
+                    <button onclick="resetFilters()" class="btn-secondary">Reset Filters</button>
+                </div>
+
+                <!-- Companies Table -->
+                <div class="companies-table-wrapper">
+                    <table class="companies-table">
+                        <thead>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Industry</th>
+                                <th>Assigned Member</th>
+                                <th>POC</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Last Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companiesTableBody">
+                            <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading companies...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Recruitment Section -->
+            <section id="recruitmentSection" class="recruitment-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Recruitment Tracking</h2>
+                </div>
+
+                <div class="recruitment-tabs">
+                    <button class="tab-btn active" onclick="switchRecruitmentTab('sip')">SIP Recruitment</button>
+                    <button class="tab-btn" onclick="switchRecruitmentTab('placement')">Final Placement</button>
+                    <button class="tab-btn" onclick="switchRecruitmentTab('sessions')">Sessions</button>
+                </div>
+
+                <div class="recruitment-table-wrapper">
+                    <table class="recruitment-table">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Type</th>
+                                <th>Stipend/CTC</th>
+                                <th>Students Hired</th>
+                                <th>Year</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recruitmentTableBody">
+                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Loading recruitment data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reportsSection" class="reports-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Reports & Downloads</h2>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h3>📊 Company Report</h3>
+                        <p>Export all companies data</p>
+                        <button onclick="downloadReport('companies', 'excel')" class="btn-primary">Excel</button>
+                        <button onclick="downloadReport('companies', 'csv')" class="btn-secondary">CSV</button>
+                    </div>
+
+                    <div class="report-card">
+                        <h3>💼 SIP Report</h3>
+                        <p>SIP recruitment details</p>
+                        <button onclick="downloadReport('sip', 'excel')" class="btn-primary">Excel</button>
+                        <button onclick="downloadReport('sip', 'csv')" class="btn-secondary">CSV</button>
+                    </div>
+
+                    <div class="report-card">
+                        <h3>🎓 Placement Report</h3>
+                        <p>Final placement data</p>
+                        <button onclick="downloadReport('placement', 'excel')" class="btn-primary">Excel</button>
+                        <button onclick="downloadReport('placement', 'csv')" class="btn-secondary">CSV</button>
+                    </div>
+
+                    <div class="report-card">
+                        <h3>🎤 Sessions Report</h3>
+                        <p>Netratva & Samarthya sessions</p>
+                        <button onclick="downloadReport('sessions', 'excel')" class="btn-primary">Excel</button>
+                        <button onclick="downloadReport('sessions', 'csv')" class="btn-secondary">CSV</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Panel Section -->
+            <section id="adminSection" class="admin-section" style="display: none;">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="switchAdminTab('users')">👥 User Management</button>
+                    <button class="tab-btn" onclick="switchAdminTab('activity')">📋 Activity Logs</button>
+                    <button class="tab-btn" onclick="switchAdminTab('settings')">⚙️ Settings</button>
+                </div>
+
+                <!-- Users Management -->
+                <div id="usersTab" class="admin-tab-content">
+                    <div class="section-header">
+                        <h3>User Management</h3>
+                        <button onclick="openAddUserForm()" class="btn-primary">+ Add User</button>
+                    </div>
+                    <div class="users-table-wrapper">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 20px;">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Activity Logs -->
+                <div id="activityTab" class="admin-tab-content" style="display: none;">
+                    <div class="section-header">
+                        <h3>Activity Logs</h3>
+                    </div>
+                    <div class="activity-logs-wrapper">
+                        <div id="activityLogsContainer"></div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div id="settingsTab" class="admin-tab-content" style="display: none;">
+                    <h3>System Settings</h3>
+                    <div class="settings-form">
+                        <div class="setting-item">
+                            <label>Portal Name</label>
+                            <input type="text" value="CDPC CRM Portal">
+                        </div>
+                        <div class="setting-item">
+                            <label>Default Role for New Users</label>
+                            <select>
+                                <option>Committee Member</option>
+                                <option>Admin</option>
+                            </select>
+                        </div>
+                        <button onclick="saveSettings()" class="btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for Company Details -->
+    <div id="companyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCompanyModal()">&times;</span>
+            <div id="companyDetailsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit Company -->
+    <div id="companyFormModal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <span class="close-modal" onclick="closeCompanyFormModal()">&times;</span>
+            <h2>Add New Company</h2>
+            <form id="companyForm" onsubmit="submitCompanyForm(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyName">Company Name *</label>
+                        <input type="text" id="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="industry">Industry/Sector *</label>
+                        <input type="text" id="industry" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assignedMember">Assigned Committee Member *</label>
+                        <select id="assignedMember" required></select>
+                    </div>
+                </div>
+
+                <h3>Point of Contact (POC)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pocName">POC Name *</label>
+                        <input type="text" id="pocName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pocDesignation">Designation</label>
+                        <input type="text" id="pocDesignation">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pocEmail">Email Address *</label>
+                        <input type="email" id="pocEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pocPhone">Phone Number *</label>
+                        <input type="tel" id="pocPhone" required>
+                    </div>
+                </div>
+
+                <h3>Recruitment Details</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="sipOffered" onchange="toggleSIPFields()">
+                            SIP Offered
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="finalPlacementOffered" onchange="togglePlacementFields()">
+                            Final Placement Offered
+                        </label>
+                    </div>
+                </div>
+
+                <div id="sipFieldsContainer" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sipStipend">Stipend (₹)</label>
+                            <input type="number" id="sipStipend" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="sipStudents">Students Hired</label>
+                            <input type="number" id="sipStudents" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="placementFieldsContainer" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ctc">CTC (₹ Lakhs)</label>
+                            <input type="number" id="ctc" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="finalStudents">Students Hired</label>
+                            <input type="number" id="finalStudents" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="netratvaOffer">
+                            Netratva Session Conducted
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="samarthyaOffer">
+                            Samarthya Session Conducted
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lastContactDate">Last Contact Date</label>
+                        <input type="date" id="lastContactDate">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="remarks">Remarks</label>
+                    <textarea id="remarks" rows="3"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Company</button>
+                    <button type="button" class="btn-secondary" onclick="closeCompanyFormModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>
