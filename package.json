@@ -1,0 +1,27 @@
+{
+  "name": "cdpc-crm-portal",
+  "version": "1.0.0",
+  "description": "Company Relationship Management Portal for CDPC IIM Udaipur",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["crm", "cdpc", "iim", "udaipur"],
+  "author": "CDPC IIM Udaipur",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.3",
+    "cors": "^2.8.5",
+    "express-validator": "^7.0.0",
+    "exceljs": "^4.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
